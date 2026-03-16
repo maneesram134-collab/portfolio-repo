@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manees Ram's Portfolio</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            background: linear-gradient(to bottom, #ffffcc 0%, #ffeb66 40%, #ffb347 70%, #ffffcc 100%);
+            font-family: Arial, sans-serif;
+            overflow-x: hidden;
+            transition: background 1s ease-in-out;
+            position: relative;
+        }
+
+        /* Blinking stars styles */
+        .stars-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .star {
+            position: absolute;
+            background-color: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+        
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.2; }
+            50% { opacity: 1; }
+        }
+
+        :root {
+            --profile-box-bg: linear-gradient(to right, #add8e6, #00008b);
+            --body-bg: linear-gradient(to right, darkorange, #ffc87c, #ffff00);
+        }
+
+        body.profile-active {
+            background: var(--body-bg);
+        }
+
+        .profile-box {
+            background: var(--profile-box-bg);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            text-align: center;
+        }
+
+        .img-profile {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 3px solid white;
+            margin-bottom: 1rem;
+            box-shadow: 0 0 60px 30px rgba(173, 216, 230, 0.95);
+            transition: box-shadow 0.3s ease-in-out;
+            animation: float 4s ease-in-out infinite;
+        }
+
+        .img-profile:hover {
+            box-shadow: 0 0 90px 45px rgba(173, 216, 230, 1);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0); }
+            50% { transform: translateY(-25px); }
+            100% { transform: translateY(0); }
+        }
+
+        .skills-list pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: inherit;
+            text-align: left;
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        .skill-item {
+            background-color: rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .skill-img {
+            width: 170px;
+            height: 170px;
+            border-radius: 10px;
+            transition: transform 0.3s ease;
+            display: block;
+            margin: 0 auto;
+        }
+
+        .skill-img:hover {
+            transform: scale(1.1);
+        }
+
+        .project-item {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .project-item img {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            transition: width 0.3s ease, height 0.3s ease;
+            cursor: pointer;
+        }
+
+        .project-item img:hover {
+            width: 400px;
+            height: 400px;
+        }
+
+        @keyframes fadeOutSlideUp {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-50px); }
+        }
+
+        @keyframes fadeInSlideDown {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-out { animation: fadeOutSlideUp 0.8s forwards; }
+        .animate-in { animation: fadeInSlideDown 0.8s forwards; }
+
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: opacity 1s ease-out, transform 1s ease-out;
+        }
+
+        .scroll-animate.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @media (max-width: 767px) {
+            .img-profile {
+                width: 200px;
+                height: 200px;
+            }
+            .skill-img {
+                width: 150px;
+                height: 150px;
+            }
+            .project-item img {
+                width: 150px;
+                height: 150px;
+            }
+            .project-item img:hover {
+                width: 250px;
+                height: 250px;
+            }
+            .typing-container {
+                font-size: 20px;
+            }
+            .word {
+                font-size: 1.2rem; /* Adjusted for better visibility */
+            }
+        }
+
+        canvas {
+            background: #ffd700;
+            border: 2px solid #00008b;
+            border-radius: 12px;
+            /* Removed max-height here for full visibility */
+        }
+
+        .average {
+            margin-top: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            color: #00008b;
+        }
+
+        .dot {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: blue;
+            border-radius: 50%;
+            pointer-events: none;
+            opacity: 0;
+            transform: translate(-50%, -50%);
+            animation: fade 1s forwards;
+        }
+
+        @keyframes fade {
+            0% { opacity: 1; }
+            100% { opacity: 0; }
+        }
+
+        .word {
+            position: absolute;
+            font-size: 2rem;
+            font-weight: bold;
+            color: rgba(255, 255, 150, 0.35);
+            white-space: nowrap;
+            user-select: none;
+            pointer-events: none;
+            animation: float-words 15s ease-in-out infinite;
+        }
+
+        @keyframes float-words {
+            0% { transform: translate(0, 0); }
+            25% { transform: translate(30px, -20px); }
+            50% { transform: translate(0, -40px); }
+            75% { transform: translate(-30px, -20px); }
+            100% { transform: translate(0, 0); }
+        }
+
+        .w1 { top: 5%; left: 10%; animation-duration: 16s; animation-delay: 0s; }
+        .w2 { top: 15%; left: 70%; animation-duration: 18s; animation-delay: 2s; }
+        .w3 { top: 25%; left: 40%; animation-duration: 20s; animation-delay: 4s; }
+        .w4 { top: 35%; left: 85%; animation-duration: 22s; animation-delay: 6s; }
+        .w5 { top: 45%; left: 20%; animation-duration: 24s; animation-delay: 8s; }
+        .w6 { top: 55%; left: 60%; animation-duration: 19s; animation-delay: 1s; }
+        .w7 { top: 65%; left: 5%; animation-duration: 21s; animation-delay: 3s; }
+        .w8 { top: 75%; left: 50%; animation-duration: 23s; animation-delay: 5s; }
+        .w9 { top: 85%; left: 80%; animation-duration: 25s; animation-delay: 7s; }
+        .w10 { top: 92%; left: 30%; animation-duration: 27s; animation-delay: 9s; }
+        .w11 { top: 12%; left: 50%; animation-duration: 20s; animation-delay: 2s; }
+        .w12 { top: 28%; left: 15%; animation-duration: 22s; animation-delay: 4s; }
+        .w13 { top: 42%; left: 70%; animation-duration: 24s; animation-delay: 6s; }
+        .w14 { top: 58%; left: 35%; animation-duration: 26s; animation-delay: 8s; }
+        .w15 { top: 72%; left: 90%; animation-duration: 28s; animation-delay: 10s; }
+        .w16 { top: 18%; left: 30%; animation-duration: 21s; animation-delay: 3s; }
+        .w17 { top: 38%; left: 60%; animation-duration: 23s; animation-delay: 5s; }
+        .w18 { top: 52%; left: 10%; animation-duration: 25s; animation-delay: 7s; }
+        .w19 { top: 68%; left: 75%; animation-duration: 27s; animation-delay: 9s; }
+        .w20 { top: 88%; left: 45%; animation-duration: 29s; animation-delay: 11s; }
+
+        .word:nth-child(odd) {
+            animation-direction: alternate-reverse;
+        }
+
+        .typing-container {
+            display: inline-block;
+            font-size: 28px;
+            color: white;
+            min-height: 40px;
+        }
+
+        .typing-text {
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .cursor {
+            border-right: 2px solid #e6eef8;
+            animation: blink 0.7s infinite;
+        }
+
+        @keyframes blink {
+            0%, 50% { border-color: transparent; }
+            51%, 100% { border-color: #e6eef8; }
+        }
+    </style>
+</head>
+<body class="profile-active">
+    <!-- Blinking stars container -->
+    <div class="stars-container" id="starsContainer"></div>
+    
+    <div>
+        <div class="word w1">JavaScript</div>
+        <div class="word w2">JavaScript</div>
+        <div class="word w3">JavaScript</div>
+        <div class="word w4">JavaScript</div>
+        <div class="word w5">JavaScript</div>
+        <div class="word w6">Python</div>
+        <div class="word w7">Python</div>
+        <div class="word w8">Python</div>
+        <div class="word w9">Python</div>
+        <div class="word w10">Python</div>
+        <div class="word w11">HTML</div>
+        <div class="word w12">HTML</div>
+        <div class="word w13">HTML</div>
+        <div class="word w14">HTML</div>
+        <div class="word w15">HTML</div>
+        <div class="word w16">CSS</div>
+        <div class="word w17">CSS</div>
+        <div class="word w18">CSS</div>
+        <div class="word w19">CSS</div>
+        <div class="word w20">CSS</div>
+    </div>
+
+    <div class="container my-5 text-center">
+        <button id="profileBtn" class="btn btn-dark mx-2">Profile</button>
+        <button id="projectsBtn" class="btn btn-dark mx-2">Projects</button>
+       
+        <a href="https://docs.google.com/forms/d/e/1FAIpQLSfFq3fgJDjpL5X4JyJNPzr-Lstw2mnlYbOXj8-iT2L2MvFWUQ/viewform?usp=dialog"><button id="contactBtn" class="btn btn-dark mx-2">Contact</button></a>
+   
+    </div>
+
+    <section id="profileSection" class="animate-in">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="profile-box p-4 p-md-5">
+                    <img src="https://i.ibb.co/FknZ2CCV/Manees-Ram.jpg" alt="Manees Ram" class="img-profile scroll-animate">
+                    <h1 class="text-warning scroll-animate">Manees Ram S</h1>
+                    <div class="typing-container scroll-animate">
+                        <span class="typing-text" id="typing"></span>
+                        <span class="cursor"></span>
+                    </div>
+                    <p class="text-info fs-6 text-start scroll-animate">
+                        Dedicated and results-oriented Data Science student with a strong foundation in statistical
+                        analysis, machine learning, and data visualization. Possess a keen interest in leveraging data
+                        to derive actionable insights and solve complex problems. Proficient in Python, SQL, and web
+                        development technologies like HTML, CSS, and JavaScript. Eager to apply my skills and knowledge
+                        in a dynamic data-driven environment.
+                    </p>
+                    <h2 class="text-white-50 mt-4 text-start scroll-animate">Education</h2>
+                    <ul class="text-start list-unstyled fs-6 scroll-animate">
+                        <li><strong>B.Sc Datascience and Analytics</strong></li>
+                        <li>SUBBALAKSHMI LAKSHMIPATHY COLLEGE OF SCIENCE</li>
+                        <li>2023-Present with 88%</li>
+                        <li><strong>KENDRIYA VIDYALAYA NO.2, TPKM</strong></li>
+                        <li>With 80%.</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="row my-5">
+            <div class="col-12 text-center">
+                <h1 class="text-danger scroll-animate">Skills</h1>
+                <div class="skills-list scroll-animate">
+                    <pre class="text-secondary" style="color: #00008b; text-align: center;">
+Programming Languages : Python, C, SQL.
+Web Development :
+    Front-end:HTML, CSS, JavaScript, Bootstrap, Jquery, React js, Angular js.
+    Back-end:Node js, Php,Java,Python,SQL, Mongo DB.
+Databases : SQL.
+Data Science Tools : Python, SQL, Tableau, PowerBI.
+Soft Skills : Communication, Teamwork, Adaptability, Time Management.
+Additional Skills : Microsoft Excel, Word, PowerPoint.
+                    </pre>
+                </div>
+            </div>
+        </div>
+        <div class="row text-center mt-4">
+            <div class="col-md-4 mb-4 scroll-animate" style="transition-delay: 0.2s;">
+                <div class="skill-item">
+                    <img src="https://i.ibb.co/XfcFZkr6/full-stack.jpg" alt="Full Stack Developer" class="skill-img">
+                    <h3 class="text-white mt-3">Full Stack Developer</h3>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 scroll-animate" style="transition-delay: 0.4s;">
+                <div class="skill-item">
+                    <img src="https://i.ibb.co/wh8BHwXX/data.jpg" alt="Data Analyst" class="skill-img">
+                    <h3 class="text-white mt-3">Data Analyst</h3>
+                </div>
+            </div>
+            <div class="col-md-4 mb-4 scroll-animate" style="transition-delay: 0.6s;">
+                <div class="skill-item">
+                    <img src="https://i.ibb.co/rKHJmf26/dash.jpg" alt="Dashboard Technologies" class="skill-img">
+                    <h3 class="text-white mt-3">Dashboard Technologies</h3>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid text-center py-3" id="skillsBlock">
+            <h3 class="text-dark fw-bold mb-3 fs-4 fs-md-3 scroll-animate">Skills Network Visualization</h3>
+            <div class="row justify-content-center">
+                <div class="col-12">
+                    <canvas id="snakeCanvas" class="w-100 img-fluid scroll-animate"></canvas>
+                </div>
+            </div>
+        </div>
+        <div class="average mt-3 fw-semibold text-primary text-center fs-6 fs-md-5 scroll-animate" id="average"></div>
+    </section>
+
+    <section id="projectsSection" style="display: none;">
+        <div class="row my-5 text-center">
+            <div class="col-12">
+                <h1 class="text-white scroll-animate">Projects</h1>
+            </div>
+        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 0.2s;">
+                <a href="imgfinal.html">
+                    <img src="https://i.ibb.co/MyZF7K1K/img-gen.jpg" alt="AI Image Generation">
+                    <h2 class="text-dark">AI Image Generation</h2>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 0.4s;">
+                <a href="">
+                    <img src="https://i.ibb.co/tMwtXpLK/mail.jpg" alt="Mail Validation">
+                    <h2 class="text-dark">Mail Validation Form</h2>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 0.6s;">
+                <a href="https://sites.google.com/view/cal-l/home">
+                    <img src="https://i.ibb.co/SwpPzPXy/cal.jpg" alt="Calculator">
+                    <h2 class="text-dark">Calculator</h2>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 0.8s;">
+                <a href="https://apricot-kate-65.tiiny.site/">
+                    <img src="https://i.ibb.co/VpqRprkb/rovk-paper-scissors.jpg" alt="Rock Paper Scissors">
+                    <h2 class="text-dark">Rock Paper Scissors Game</h2>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1s;">
+                <a href="https://sites.google.com/view/translatorfrom-text/home">
+                    <img src="https://i.ibb.co/VYSCpCQt/TRANSLATOR.png" alt="Translator">
+                    <h2 class="text-dark">Translator</h2>
+                </a>
+            </div>
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="https://sites.google.com/view/text-summmarization/home">
+                    <img src="https://i.ibb.co/kVQCVyFL/sum.jpg" alt="Text Summarization">
+                    <h2 class="text-dark">Text Summarization</h2>
+                </a>
+            </div>
+
+
+             <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="text to video.html">
+                    <img src="text to video.jpg" alt="Text to video">
+                    <h2 class="text-dark">Text To Video</h2>
+                </a>
+            </div>
+           <div class="row my-5 text-center">
+            <div class="col-12">
+                <h1 class="text-white scroll-animate">Oasis Infobyte Projects</h1>
+            </div>
+        </div>
+         
+        <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="AImailchatfinal.html">
+                    <img src="AI mail chat.png" alt="AI mail chat">
+                    <h2 class="text-dark">AI Mail chat</h2>
+                </a>
+            </div>
+
+             <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="bill.html">
+                    <img src="billing system.png" alt="bill">
+                    <h2 class="text-dark">Billing System</h2>
+                </a>
+            </div>
+
+
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="chatbot.html">
+                    <img src="chat bot.png" alt="chat bot">
+                    <h2 class="text-dark">AI chat bot</h2>
+                </a>
+            </div>
+                   <br>
+              <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="locationtracker.html">
+                    <img src="location tracker.png" alt="chat bot">
+                    <h2 class="text-dark">location tracker</h2>
+                </a>
+            </div>
+
+
+            <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="wheatherdetectiondashboard.html">
+                    <img src="wheather dashboard.png" alt="chat bot">
+                    <h2 class="text-dark">Wheather Dashboard Detection</h2>
+                </a>
+            </div>
+
+             <div class="row my-5 text-center">
+            <div class="col-12">
+                <h1 class="text-white scroll-animate">Internship Projects</h1>
+            </div>
+        </div>
+
+
+         <div class="col-lg-3 col-md-4 col-sm-6 project-item scroll-animate" style="transition-delay: 1.2s;">
+                <a href="https://examseatingplan.netlify.app/">
+                    <img src="exam seating plan.png" alt="chat bot">
+                    <h2 class="text-dark">Exam Hall Seating Allotmeny System</h2>
+                </a>
+            </div>
+          </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script>
+        // Create blinking stars
+        function createStars() {
+            const starsContainer = document.getElementById('starsContainer');
+            const starCount = 100; // Number of stars
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.classList.add('star');
+                
+                // Random position
+                const x = Math.random() * 100;
+                const y = Math.random() * 100;
+                
+                // Random size (1-3px)
+                const size = Math.random() * 2 + 1;
+                
+                // Random animation delay
+                const delay = Math.random() * 3;
+                
+                star.style.left = `${x}%`;
+                star.style.top = `${y}%`;
+                star.style.width = `${size}px`;
+                star.style.height = `${size}px`;
+                star.style.animationDelay = `${delay}s`;
+                
+                starsContainer.appendChild(star);
+            }
+        }
+        
+        // Mouse trail effect
+        document.addEventListener("mousemove", (e) => {
+            for (let i = 0; i < 5; i++) {
+                setTimeout(() => {
+                    const dot = document.createElement("div");
+                    dot.className = "dot";
+                    dot.style.left = e.pageX + "px";
+                    dot.style.top = e.pageY + "px";
+                    document.body.appendChild(dot);
+                    setTimeout(() => dot.remove(), 1000);
+                }, i * 100);
+            }
+        });
+        
+        // Initialize stars
+        document.addEventListener('DOMContentLoaded', () => {
+            createStars();
+        });
+    </script>
+    <script>
+        $(document).ready(function() {
+            const profileSection = $('#profileSection');
+            const projectsSection = $('#projectsSection');
+
+            $('#profileBtn').on('click', function() {
+                if (projectsSection.is(':visible')) {
+                    projectsSection.addClass('animate-out');
+                    setTimeout(() => {
+                        projectsSection.hide().removeClass('animate-out');
+                        profileSection.show().addClass('animate-in');
+                        triggerScrollAnimation();
+                    }, 800);
+                }
+            });
+
+            $('#projectsBtn').on('click', function() {
+                if (profileSection.is(':visible')) {
+                    profileSection.addClass('animate-out');
+                    setTimeout(() => {
+                        profileSection.hide().removeClass('animate-out');
+                        projectsSection.show().addClass('animate-in');
+                        triggerScrollAnimation();
+                    }, 800);
+                }
+            });
+        });
+    </script>
+    <script>
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('show');
+                } else {
+                    entry.target.classList.remove('show');
+                }
+            });
+        }, {
+            rootMargin: '0px',
+            threshold: 0.1
+        });
+
+        function triggerScrollAnimation() {
+            const animatedElements = document.querySelectorAll('.scroll-animate');
+            animatedElements.forEach(el => observer.observe(el));
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            triggerScrollAnimation();
+        });
+    </script>
+    <script>
+        const canvas = document.getElementById("snakeCanvas");
+        const ctx = canvas.getContext("2d");
+        const skills = [
+            { id: 'HTML/CSS/JS', pct: 100 },
+            { id: 'Bootstrap', pct: 80 },
+            { id: 'jQuery', pct: 80 },
+            { id: 'React JS', pct: 50 },
+            { id: 'Node JS', pct: 80 },
+            { id: 'Angular JS', pct: 50 },
+            { id: 'Python', pct: 80 },
+            { id: 'Java', pct: 50 },
+            { id: 'SQL', pct: 50 },
+            { id: 'MongoDB', pct: 80 },
+            { id: 'R Programming', pct: 40 },
+            { id: 'Tableau', pct: 40 },
+            { id: 'Machine Learning', pct: 40 },
+            { id: 'Deep Learning', pct: 40 }
+        ];
+        const colors = [
+            "#1e90ff", "#4169e1", "#0000cd", "#4682b4", "#5f9ea0",
+            "#6495ed", "#00bfff", "#1e3a8a", "#3b82f6", "#00008b",
+            "#20b2aa", "#008b8b", "#6a5acd", "#b22222"
+        ];
+        const avg = Math.round(skills.reduce((a, b) => a + b.pct, 0) / skills.length);
+        document.getElementById("average").textContent = `Average Skill Level: ${avg}%`;
+        let t = 0;
+
+        function drawSnake() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const positions = [];
+            const spacing = 96;
+            const centerY = canvas.height / 2;
+            const startX = 100;
+
+            for (let i = 0; i < skills.length; i++) {
+                const x = startX + i * spacing;
+                const y = centerY + Math.sin((t / 100) + i / 2) * 60;
+                positions.push({ x, y, skill: skills[i].id, pct: skills[i].pct, color: colors[i % colors.length] });
+            }
+
+            ctx.strokeStyle = "rgba(0,250,255,1)";
+            ctx.lineWidth = 0.5;
+            ctx.shadowColor = "rgba(0,255,255,1)";
+            ctx.shadowBlur = 6;
+            ctx.beginPath();
+            for (let i = 0; i < positions.length - 1; i++) {
+                ctx.moveTo(positions[i].x, positions[i].y);
+                ctx.lineTo(positions[i + 1].x, positions[i + 1].y);
+            }
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+
+            for (let layer = 0; layer < 3; layer++) {
+                ctx.strokeStyle = "rgba(0,255,255,0.8)";
+                ctx.lineWidth = 0.25;
+                ctx.shadowColor = "rgba(0,255,255,1)";
+                ctx.shadowBlur = 4;
+                positions.forEach((p, i) => {
+                    for (let j = i + 2; j < positions.length; j += 2) {
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        const midX = (p.x + positions[j].x) / 2;
+                        const midY = (p.y + positions[j].y) / 2 - (10 + layer * 10);
+                        ctx.quadraticCurveTo(midX, midY, positions[j].x, positions[j].y);
+                        ctx.stroke();
+                    }
+                });
+                ctx.shadowBlur = 0;
+            }
+
+            positions.forEach((p) => {
+                const radius = 10 + (p.pct / 100) * 20;
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
+                ctx.fillStyle = p.color;
+                ctx.fill();
+                ctx.fillStyle = "#fff";
+                ctx.font = `${Math.max(12, radius / 2.2)}px Arial`;
+                ctx.textAlign = "center";
+                ctx.textBaseline = "middle";
+                ctx.fillText(p.skill, p.x, p.y - 6);
+                ctx.fillText(p.pct + "%", p.x, p.y + radius / 2.5);
+            });
+
+            t += 1;
+            requestAnimationFrame(drawSnake);
+        }
+
+        drawSnake();
+
+        function resizeCanvas() {
+            const canvas = document.getElementById("snakeCanvas");
+            const parent = canvas.parentElement;
+            canvas.width = parent.offsetWidth;
+            canvas.height = Math.min(350, parent.offsetWidth * 0.5); /* Adjusted aspect ratio for better mobile view */
+        }
+
+        window.addEventListener("load", resizeCanvas);
+        window.addEventListener("resize", resizeCanvas);
+    </script>
+    <script>
+        window.onload = function() {
+            const phrases = [
+                "I am Full Stack Developer",
+                "I am Data Analyst",
+                "Expert in Prompt Engineering",
+                "AI & ML Developer"
+            ];
+            const typingEl = document.getElementById("typing");
+            let phraseIndex = 0;
+            let charIndex = 0;
+            let isDeleting = false;
+
+            function typeEffect() {
+                const currentPhrase = phrases[phraseIndex];
+                if (!isDeleting) {
+                    typingEl.textContent = currentPhrase.substring(0, charIndex + 1);
+                    charIndex++;
+                    if (charIndex === currentPhrase.length) {
+                        isDeleting = true;
+                        setTimeout(typeEffect, 1000);
+                        return;
+                    }
+                } else {
+                    typingEl.textContent = currentPhrase.substring(0, charIndex - 1);
+                    charIndex--;
+                    if (charIndex === 0) {
+                        isDeleting = false;
+                        phraseIndex = (phraseIndex + 1) % phrases.length;
+                    }
+                }
+                const speed = isDeleting ? 50 : 100;
+                setTimeout(typeEffect, speed);
+            }
+            typeEffect();
+        }
+    </script>
+</body>
+</html>
